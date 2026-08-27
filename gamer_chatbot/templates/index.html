@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GAMER · Cosmic Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="title-group">
+                <h1>
+                    <i class="fas fa-star"></i> GAMER 
+                    <i class="fas fa-meteor"></i>
+                </h1>
+                <div class="subtitle">
+                    <i class="fas fa-globe-asia"></i> 
+                    Developed by Muhammad Umar,Saad Kamran
+                    <i class="fas fa-gamepad"></i>
+                </div>
+            </div>
+            <div class="infinity-icon">
+                <i class="fas fa-infinity"></i>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <i class="fas fa-comment-dots"></i> 
+                Hi! my name is <strong>GAMER</strong> — <em>Global Archive of Modern Entertainment & Recreation</em>.<br />
+                What's your gamer tag? (tell me your name)
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="⚡ type your message ..." autofocus />
+            <button class="voice-btn" id="voiceBtn" title="Voice input">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button id="sendBtn">
+                <i class="fas fa-paper-plane"></i> SEND
+            </button>
+        </div>
+        <div class="footer-note">
+            <i class="fas fa-circle"></i> cosmic · gaming · code
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
