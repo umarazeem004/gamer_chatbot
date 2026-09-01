@@ -4,24 +4,39 @@ import os
 import uuid
 from dotenv import load_dotenv
 
-# Load environment variables
+# =========================================================
+# LOAD ENVIRONMENT VARIABLES
+# =========================================================
+
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "Cosmic_gamer_secret_2026")
-
-# =========================================================
-# 🔑 GEMINI API KEY - SECURELY LOADED FROM .env
-# =========================================================
 API_KEY = os.getenv("API_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+# Check API key
 if not API_KEY:
-    raise ValueError("❌ API_KEY not found in .env file!")
+    raise ValueError("❌ API_KEY not found! Add API_KEY to your .env file.")
 
-client = genai.Client(api_key= API_KEY)
+# Check secret key
+if not SECRET_KEY:
+    raise ValueError("❌ SECRET_KEY not found! Add SECRET_KEY to your .env file.")
 
-MODEL = "gemini-3.6flash"  # Using latest stable model
+# =========================================================
+# FLASK APP
+# =========================================================
 
-# Store user data
+app = Flask(__name__)
+app.secret_key = SECRET_KEY
+
+# =========================================================
+# GEMINI
+# =========================================================
+
+client = genai.Client(api_key=API_KEY)
+
+MODEL = "gemini-3.6-flash"
+
+# Store user sessions
 user_sessions = {}
 
 
@@ -31,7 +46,6 @@ user_sessions = {}
 
 @app.route("/")
 def index():
-    """Serve the main chatbot page"""
     return render_template("index.html")
 
 
@@ -41,7 +55,6 @@ def index():
 
 @app.route("/css/<path:filename>")
 def serve_css(filename):
-    """Serve CSS files"""
     return send_from_directory("static/css", filename)
 
 
@@ -51,7 +64,6 @@ def serve_css(filename):
 
 @app.route("/js/<path:filename>")
 def serve_js(filename):
-    """Serve JavaScript files"""
     return send_from_directory("static/js", filename)
 
 
@@ -65,7 +77,6 @@ def chat():
     data = request.get_json(silent=True) or {}
 
     user_message = data.get("message", "").strip()
-
     session_id = data.get("session_id")
 
     # Create session ID
@@ -85,7 +96,6 @@ def chat():
 
     # Empty message
     if not user_message:
-
         return jsonify({
             "response": "Please say something, cosmic traveler! 🌌",
             "session_id": session_id
@@ -101,11 +111,11 @@ def chat():
         session["waiting_for_name"] = False
 
         response = (
-            f"🌟 Cosmic welcome Aslam Hi admin Umar, "
+            f"🌟 Cosmic welcome! Hi admin Umar, "
             f"<strong>{session['name']}</strong>!<br><br>"
             "I am <strong>GAMER</strong>, your AI gaming assistant. 🎮<br><br>"
-            "You can ask me about Roblox, Minecraft, "
-            "Python, anime, coding, games, and much more and also anything everything i give you anything i give you!"
+            "You can ask me about Roblox, Minecraft, Python, "
+            "anime, coding, games, and much more!"
         )
 
     else:
@@ -152,10 +162,8 @@ Your personality:
 - Explain things simply for beginners
 - Use emojis sometimes
 - You can call the user bro when appropriate
-- You can tell him about all games if he ask
-- You can play with him if he ask you
-- If he ask anything tell him
-
+- You can tell the user about games
+- Answer questions helpfully
 
 You can help with:
 - Python
@@ -169,8 +177,8 @@ You can help with:
 - Game development
 - Anime
 - General questions
-- All the Games
-- All about everything
+- Games
+- Coding
 
 If the user asks for code, provide working code.
 If the user asks for an explanation, explain it simply.
@@ -179,10 +187,12 @@ Do not constantly repeat the same response.
 
     try:
 
-        prompt = system_prompt + """
+        prompt = f"""
+{system_prompt}
 
 User message:
-""" + message
+{message}
+"""
 
         result = client.models.generate_content(
             model=MODEL,
@@ -190,18 +200,16 @@ User message:
         )
 
         if not result.text:
-
             return "⚠️ Gemini returned an empty response."
 
         response = result.text
 
-        # Convert Python code blocks
+        # Convert code blocks
         response = response.replace(
             "```python",
             "<pre><code>"
         )
 
-        # Convert other code blocks
         response = response.replace(
             "```",
             "</code></pre>"
@@ -224,7 +232,7 @@ User message:
 
         return (
             "❌ <strong>Gemini Error</strong><br><br>"
-            f"<code>{str(e)}</code>"
+            "<code>Something went wrong while contacting Gemini.</code>"
         )
 
 
@@ -238,10 +246,8 @@ if __name__ == "__main__":
     print("        🎮 GAMER AI CHATBOT 🎮")
     print("=" * 50)
 
-    if not API_KEY:
-        print("❌ GEMINI API KEY NOT FOUND IN .env FILE")
-    else:
-        print("✅ GEMINI API KEY LOADED SECURELY FROM .env")
+    print("✅ API KEY LOADED")
+    print("✅ SECRET KEY LOADED")
 
     print("🤖 Gemini Model:", MODEL)
     print("🌐 Open: http://127.0.0.1:5000")
